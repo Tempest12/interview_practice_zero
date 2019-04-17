@@ -5,7 +5,7 @@
 #include "checkSort.h"
 
 #define ANS_LEN 41
-#define TEST_NUM 3 //8
+#define TEST_NUM 4 //8
 
 void iterativeInplace(int* array, int size)
 {
@@ -14,24 +14,24 @@ void iterativeInplace(int* array, int size)
     int bandIndex = 0;
 
     int leftSize = 0;
-    int leftStart = 0;
+    int leftIndex = 0;
     int leftCount = 0;
 
     int rightSize = 0;
-    int rightStart = 0;
+    int rightIndex = 0;
     int rightCount = 0;
 
-    int answerIndex = 0;
-    int startIndex = 0;
-    int odd = 0;
     int round = 0;
 
-    while(bandSize < size)
+    /*printf("Size: %i\n", size);*/
+
+    while(bandSize <= size)
     {
         bandCount = size / bandSize;
 
-        printf("Round info %i:\n", round);
+        /*printf("Round info %i:\n", round);
         printf("Band Size: %i\n", bandSize);
+        printf("Band Count: %i\n", bandCount);*/
 
         for(bandIndex = 0; bandIndex < bandCount; bandIndex++)
         {
@@ -39,29 +39,49 @@ void iterativeInplace(int* array, int size)
             rightSize = bandSize >> 1;
 
             //Set Starts:
-            startIndex = bandSize * bandIndex;
-            leftStart = startIndex;
-            rightStart = leftStart + leftSize;
-            answerIndex = startIndex;
+            leftIndex = bandSize * bandIndex;
+            rightIndex = leftIndex + leftSize;
 
             //Set Ends: (Make sure to adjust right end if bigger than array)
             leftCount = leftSize;
             rightCount = rightSize;
 
-            if((rightStart + rightCount ) > size)
+            if((rightIndex + rightCount ) > size)
             {
-                rightCount = size - rightStart; 
+                rightCount = size - rightIndex; 
             }
 
 
-            printf("\tBand Index: %i\n", bandIndex);
+            /*printf("\tBand Index: %i\n", bandIndex);
             printf("\n");
-            printf("\tLeft Count: %i\n", leftCount);
-            printf("\tLeft Start: %i\n", leftStart);
+            printf("\t\tLeft Count: %i\n", leftCount);
+            printf("\t\tLeft Start: %i\n", leftIndex);
             printf("\n");
-            printf("\tRight Count: %i\n", rightCount);
-            printf("\tRight Start: %i\n", rightStart);
-            printf("\n");
+            printf("\t\tRight Count: %i\n", rightCount);
+            printf("\t\tRight Start: %i\n", rightIndex);
+            printf("\n");*/
+
+            while(leftCount > 0 && rightCount > 0)
+            {
+                //Two scenarios here:
+                //Left is smaller than right (or tied.) in which case we just move on.
+                if(array[leftIndex] <= array[rightIndex])
+                {
+                    leftCount--;
+                    leftIndex++;
+                }
+                //Right is smaller in which case we need to swap right into left:
+                else
+                {
+                    int temp = array[leftIndex];
+                    array[leftIndex] = array[rightIndex];
+                    array[rightIndex] = temp;
+
+                    leftIndex++;
+                    rightIndex++;
+                    rightCount--;
+                }
+            }
         }
 
         bandSize *= 2;
@@ -97,8 +117,6 @@ void recursive(int* array, int size)
 
     //Split and call again:
     recursive(left, leftSize);
-
-    //Combine left and right:
     recursive(right, rightSize);
 
     //Merge:
@@ -170,26 +188,33 @@ void runTest(int* array, int size)
     memcpy(copy, array, size * sizeof(index));
 
     recursive(array, size);
-    iterativeInplace(array, size);
+    iterativeInplace(copy, size);
 
-    //printf("%s", answerString);
+    printf("%s", answerString);
 
     if(checkSort(array, size) == 1)
     {
-        //printf("recur_passed ");
+        printf("recur_passed ");
     }
     else
     {
-        //printf("recur_FAILED ");
+        printf("recur_FAILED ");
     }
 
     if(checkSort(copy, size) == 1)
     {
-        //printf("iter_passed\n");
+        printf("iter_passed\n");
     }
     else
     {
-        // printf("iter_FAILED\n");
+        printf("iter_FAILED. ");
+        printf("Failing answer:");
+        for(index = 0; index < size; index++)
+        {
+            printf(" %i", copy[index]);
+        }
+
+        printf("\n");
     }
 
     free(copy);
@@ -200,7 +225,8 @@ int main(int argc, char** argv)
     int index = 0;
     int testTable[TEST_NUM][11] =  {{ 0, 0},
                                     { 1, 1},
-                                    { 7, 7, 3, 4, 5, 7, 6, 7,}};
+                                    { 7, 7, 3, 4, 5, 7, 6, 7,},
+                                    { 8, 2, 1, 3, 4, 8, 6, 7, 5}};
                                     /*{ 2, 7, 6},
                                     { 3, 5, 4, 3},
                                     { 4, 1, 2, 3, 4},

@@ -36,7 +36,7 @@ void subArraySum(int* array, int size, int targetSum, int* first, int* last)
     {
         if(currentSum == targetSum)
         {
-            *first
+		//Do Something...
         }
     }
 

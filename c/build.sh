@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# findNR:
+gcc -g -Wall findNR.c linkedListChar.c -o findNR
+
 # Merge Sort:
 gcc -g -Wall mergesort.c checkSort.c -o merge
 

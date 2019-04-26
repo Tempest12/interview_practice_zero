@@ -43,7 +43,7 @@ char* findNR(char* str)
 
 
 		// Case One: (Unique character)
-		if(hash[temp] == 0)
+		if(hash[(size_t)temp] == 0)
 		{
 			current++;
 		}
@@ -63,14 +63,14 @@ char* findNR(char* str)
 			for(index = 0; index <= kill; index++)
 			{
 				char dying = removeHead(list);
-				hash[dying] = 0;
+				hash[(size_t)dying] = 0;
 				left++;
 			}
 
 			current = left;
 		}
 
-		hash[temp] = 1;
+		hash[(size_t)temp] = 1;
 		addAtTail(list, temp);
 	}
 
